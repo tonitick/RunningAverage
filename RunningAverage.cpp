@@ -75,22 +75,22 @@ bool RunningAverage::clear()
 // }
 
 
-// //  returns the average of the data-set added so far, 
-// //  returns NAN if no elements or missing array
-// float RunningAverage::getAverage()
-// {
-//   if ((_count == 0) || (_array == NULL))
-//   {
-//     return NAN;
-//   }
-//   //  OPTIMIZE local variable for sum.
-//   _sum = 0;
-//   for (uint16_t i = 0; i < _count; i++)
-//   {
-//     _sum += _array[i];
-//   }
-//   return _sum / _count;   //  multiplication is faster ==> extra admin
-// }
+//  returns the average of the data-set added so far, 
+//  returns NAN if no elements or missing array
+float RunningAverage::getAverage()
+{
+  if ((_count == 0) || (_array == NULL))
+  {
+    return NAN;
+  }
+  //  OPTIMIZE local variable for sum.
+  _sum = 0;
+  for (uint16_t i = 0; i < _count; i++)
+  {
+    _sum += _array[i];
+  }
+  return _sum / _count;   //  multiplication is faster ==> extra admin
+}
 
 
 // //  the larger the size of the internal buffer 
@@ -105,38 +105,38 @@ bool RunningAverage::clear()
 // }
 
 
-// //  returns the minimum value in the buffer
-// float RunningAverage::getMinInBuffer() const
-// {
-//   if ((_count == 0) || (_array == NULL))
-//   {
-//     return NAN;
-//   }
+//  returns the minimum value in the buffer
+float RunningAverage::getMinInBuffer() const
+{
+  if ((_count == 0) || (_array == NULL))
+  {
+    return NAN;
+  }
 
-//   float _min = _array[0];
-//   for (uint16_t i = 1; i < _count; i++)
-//   {
-//     if (_array[i] < _min) _min = _array[i];
-//   }
-//   return _min;
-// }
+  float _min = _array[0];
+  for (uint16_t i = 1; i < _count; i++)
+  {
+    if (_array[i] < _min) _min = _array[i];
+  }
+  return _min;
+}
 
 
-// //  returns the maximum value in the buffer
-// float RunningAverage::getMaxInBuffer() const
-// {
-//   if ((_count == 0) || (_array == NULL))
-//   {
-//     return NAN;
-//   }
+//  returns the maximum value in the buffer
+float RunningAverage::getMaxInBuffer() const
+{
+  if ((_count == 0) || (_array == NULL))
+  {
+    return NAN;
+  }
 
-//   float _max = _array[0];
-//   for (uint16_t i = 1; i < _count; i++)
-//   {
-//     if (_array[i] > _max) _max = _array[i];
-//   }
-//   return _max;
-// }
+  float _max = _array[0];
+  for (uint16_t i = 1; i < _count; i++)
+  {
+    if (_array[i] > _max) _max = _array[i];
+  }
+  return _max;
+}
 
 
 // //  returns the value of an element if exist, NAN otherwise
@@ -150,60 +150,60 @@ bool RunningAverage::clear()
 // }
 
 
-// //  Return standard deviation of running average.
-// //  If buffer is empty or has only one element, return NAN.
-// float RunningAverage::getStandardDeviation() const
-// {
-//   //  see issue #13
-//   //  need float _stddev = -1;
-//   //     + patch add() and clear() to reset _stddev to -1;
-//   //  if (_stddev != -1) return _stddev;
-//   if (_count <= 1) return NAN;
+//  Return standard deviation of running average.
+//  If buffer is empty or has only one element, return NAN.
+float RunningAverage::getStandardDeviation() const
+{
+  //  see issue #13
+  //  need float _stddev = -1;
+  //     + patch add() and clear() to reset _stddev to -1;
+  //  if (_stddev != -1) return _stddev;
+  if (_count <= 1) return NAN;
 
-//   float temp = 0;
-//   float average = getFastAverage();
-//   for (uint16_t i = 0; i < _count; i++)
-//   {
-//     temp += pow((_array[i] - average), 2);
-//   }
-//   //  when to divide by count || count-1?
-//   //  - divide by count: whole set
-//   //  - divide by count - 1: sample of larger set (which run avg is)
-//   temp = sqrt(temp/(_count - 1));
-//   return temp;
-//   //  see issue #13
-//   //  _stddev = temp;  // cache the calculate value
-//   //  return _stddev;
-// }
-
-
-// //  Return standard error of running average.
-// //  If buffer is empty or has only one element, return NAN.
-// float RunningAverage::getStandardError() const
-// {
-//   float temp = getStandardDeviation();
-//   if (temp == NAN) return NAN;
-
-//   float n;
-//   if (_count >= 30) n = _count;
-//   else n = _count - 1;
-//   temp = temp/sqrt(n);
-
-//   return temp;
-// }
+  float temp = 0;
+  float average = getFastAverage();
+  for (uint16_t i = 0; i < _count; i++)
+  {
+    temp += pow((_array[i] - average), 2);
+  }
+  //  when to divide by count || count-1?
+  //  - divide by count: whole set
+  //  - divide by count - 1: sample of larger set (which run avg is)
+  temp = sqrt(temp/(_count - 1));
+  return temp;
+  //  see issue #13
+  //  _stddev = temp;  // cache the calculate value
+  //  return _stddev;
+}
 
 
-// //  Return coefficient of variation.
-// //  If buffer is empty or has only one element or zero average, return NAN.
-// float RunningAverage::getCoefficientOfVariation() const
-// {
-//   float temp = getStandardDeviation();
-//   if (temp == NAN) return NAN;
-//   if (_sum == 0) return NAN;
+//  Return standard error of running average.
+//  If buffer is empty or has only one element, return NAN.
+float RunningAverage::getStandardError() const
+{
+  float temp = getStandardDeviation();
+  if (temp == NAN) return NAN;
 
-//   float cv = temp * _count / _sum;
-//   return cv;
-// }
+  float n;
+  if (_count >= 30) n = _count;
+  else n = _count - 1;
+  temp = temp/sqrt(n);
+
+  return temp;
+}
+
+
+//  Return coefficient of variation.
+//  If buffer is empty or has only one element or zero average, return NAN.
+float RunningAverage::getCoefficientOfVariation() const
+{
+  float temp = getStandardDeviation();
+  if (temp == NAN) return NAN;
+  if (_sum == 0) return NAN;
+
+  float cv = temp * _count / _sum;
+  return cv;
+}
 
 
 // //  fill the average with the same value number times. (weight)
@@ -289,66 +289,66 @@ float RunningAverage::getAverageLast(const uint32_t count)
 }
 
 
-// float RunningAverage::getStandardDeviationLast(const uint16_t count)
-// {
-//   uint16_t cnt = count;
-//   if (cnt > _count) cnt = _count;
-//   if (cnt <= 1) return NAN;
+float RunningAverage::getStandardDeviationLast(const uint32_t count)
+{
+  uint32_t cnt = count;
+  if (cnt > _count) cnt = _count;
+  if (cnt <= 1) return NAN;
 
-//   float temp = 0;
-//   float average = getAverageLast(count);
+  float temp = 0;
+  float average = getAverageLast(count);
 
-//   uint16_t idx = _index;
+  uint32_t idx = _index;
 
-//   for (uint16_t i = 0; i < cnt; i++)
-//   {
-//     if (idx == 0) idx = _size;
-//     idx--;
-//     temp += pow((_array[idx] - average), 2);
-//   }
-//   temp = sqrt(temp/(cnt - 1));
-//   return temp;
-// }
-
-
-// float RunningAverage::getMinInBufferLast(const uint16_t count)
-// {
-//   uint16_t cnt = count;
-//   if (cnt > _count) cnt = _count;
-//   if (cnt == 0) return NAN;
-
-//   uint16_t idx = _index;
-//   if (idx == 0) idx = _size;
-//   idx--;
-//   float _min = _array[idx];
-//   for (uint16_t i = 0; i < cnt; i++)
-//   {
-//     if (_array[idx] < _min) _min = _array[idx];
-//     if (idx == 0) idx = _size;
-//     idx--;
-//   }
-//   return _min;
-// }
+  for (uint32_t i = 0; i < cnt; i++)
+  {
+    if (idx == 0) idx = _size;
+    idx--;
+    temp += pow((_array[idx] - average), 2);
+  }
+  temp = sqrt(temp/(cnt - 1));
+  return temp;
+}
 
 
-// float RunningAverage::getMaxInBufferLast(const uint16_t count)
-// {
-//   uint16_t cnt = count;
-//   if (cnt > _count) cnt = _count;
-//   if (cnt == 0) return NAN;
+float RunningAverage::getMinInBufferLast(const uint32_t count)
+{
+  uint32_t cnt = count;
+  if (cnt > _count) cnt = _count;
+  if (cnt == 0) return NAN;
 
-//   uint16_t idx = _index;
-//   if (idx == 0) idx = _size;
-//   idx--;
-//   float _max = _array[idx];
-//   for (uint16_t i = 0; i < cnt; i++)
-//   {
-//     if (_array[idx] > _max) _max = _array[idx];
-//     if (idx == 0) idx = _size;
-//     idx--;
-//   }
-//   return _max;
-// }
+  uint32_t idx = _index;
+  if (idx == 0) idx = _size;
+  idx--;
+  float _min = _array[idx];
+  for (uint32_t i = 0; i < cnt; i++)
+  {
+    if (_array[idx] < _min) _min = _array[idx];
+    if (idx == 0) idx = _size;
+    idx--;
+  }
+  return _min;
+}
+
+
+float RunningAverage::getMaxInBufferLast(const uint32_t count)
+{
+  uint32_t cnt = count;
+  if (cnt > _count) cnt = _count;
+  if (cnt == 0) return NAN;
+
+  uint32_t idx = _index;
+  if (idx == 0) idx = _size;
+  idx--;
+  float _max = _array[idx];
+  for (uint32_t i = 0; i < cnt; i++)
+  {
+    if (_array[idx] > _max) _max = _array[idx];
+    if (idx == 0) idx = _size;
+    idx--;
+  }
+  return _max;
+}
 
 
 // float RunningAverage::getAverageSubset(const uint16_t start, const uint16_t count)
